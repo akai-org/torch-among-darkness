@@ -9,6 +9,13 @@ public class PlayerControllerHub : MonoBehaviour
     public Vector2 movement;
     public Animator animator;
 
+    public static PlayerControllerHub Instance { get; private set; }
+
+    void Start()
+    {
+        Instance = this;
+    }
+
     void Update(){
         movement.x = Input.GetAxisRaw("Horizontal");
         movement.y = Input.GetAxisRaw("Vertical");
