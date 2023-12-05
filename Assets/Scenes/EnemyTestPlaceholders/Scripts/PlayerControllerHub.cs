@@ -12,7 +12,7 @@ public class PlayerControllerHub : MonoBehaviour
     public static PlayerControllerHub Instance { get; private set; }
 
     void Start()
-    {
+    {++
         Instance = this;
     }
 
