@@ -8,6 +8,8 @@ public class Test : MonoBehaviour
 {
     public Player prefab;
     public List<Player> players = new();
+    Transform torchTransform;
+
     // Start is called before the first frame update
     async void Start()
     {
@@ -22,7 +24,7 @@ public class Test : MonoBehaviour
         Joystick.onPlayerJoined += (id, nickname) =>
         {
             print($"Player with nickname: {nickname} and id {id} joined the game");
-            var player = Instantiate(prefab, Vector3.zero, Quaternion.identity);
+            var player = Instantiate(prefab, torchTransform.position, Quaternion.identity);
             player.id = id;
             player.userName = nickname;
             players.Add(player);
@@ -50,7 +52,7 @@ public class Test : MonoBehaviour
     void Update()
     {
         Joystick.Update();
-        if (Input.GetKeyDown(KeyCode.D))
+        if (Input.GetKeyDown(KeyCode.H))
         {
             SceneManager.LoadScene("second_scene");
         }
@@ -59,6 +61,7 @@ public class Test : MonoBehaviour
     void Awake()
     {
         DontDestroyOnLoad(transform.gameObject);
+        torchTransform = GameObject.Find("Torch").GetComponent<Transform>();
     }
 
     private async void OnApplicationQuit()
