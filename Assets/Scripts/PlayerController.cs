@@ -25,6 +25,7 @@ public class Player : MonoBehaviour
     public int health { get { return currentHealth; }}
     int currentHealth;
     bool isInvincible;
+    bool isDead;
 
     void Start()
     {
@@ -38,6 +39,11 @@ public class Player : MonoBehaviour
 
     void Update()
     {
+        if(isDead)
+        {
+            return;
+        }
+
         movement.x = Joystick.GetAnalogHorizontal(id, AnalogControls.Left);
         movement.y = Joystick.GetAnalogVertical(id, AnalogControls.Left);
         movement.x = Input.GetAxis("Horizontal"); //control override for debugging purposes
@@ -84,7 +90,7 @@ public class Player : MonoBehaviour
     }
 
     private void OnTriggerExit2D(Collider2D torchLightTrigger) 
-    {
+    {   
         torchDamageCoroutine = StartCoroutine(TorchDamage());
     }
 
@@ -106,8 +112,27 @@ public class Player : MonoBehaviour
             {
                 return;
             }
+            StartCoroutine(SetInvincible(1f)); //invincibility frames
         }
         currentHealth = Mathf.Clamp(currentHealth + amount, 0, maxHealth);
+        if(currentHealth <= 0)
+        {
+            isDead = true;
+        }
         print(currentHealth + "/" + maxHealth);
+    }
+
+    public void Respawn()
+    {
+        isDead = false;
+        currentHealth = maxHealth;
+        StartCoroutine(SetInvincible(3f));
+    }
+
+    IEnumerator SetInvincible(float time = 1f)
+    {
+        isInvincible = true;
+        yield return new WaitForSeconds(time);
+        isInvincible = false;
     }
 }
