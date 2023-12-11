@@ -12,7 +12,7 @@ public class Player : MonoBehaviour
     public GameObject torch;
     Transform torchTransform;
     CircleCollider2D torchLightTrigger;
-    bool isInsideTorchLight = true;
+    private Coroutine torchDamageCoroutine;
     int torchLightDamage = 1;
 
     // movement
@@ -34,7 +34,6 @@ public class Player : MonoBehaviour
         torch = GameObject.Find("Torch");
         torchTransform = torch.GetComponent<Transform>();
         torchLightTrigger = torch.GetComponent<CircleCollider2D>();
-        StartCoroutine(TorchDamage());
     }
 
     void Update()
@@ -77,24 +76,24 @@ public class Player : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D torchLightTrigger)
     {
-        isInsideTorchLight = true;
         torchLightDamage = 1;
+        if(torchDamageCoroutine != null)
+        {
+            StopCoroutine(torchDamageCoroutine);
+        }
     }
 
     private void OnTriggerExit2D(Collider2D torchLightTrigger) 
     {
-        isInsideTorchLight = false;
+        torchDamageCoroutine = StartCoroutine(TorchDamage());
     }
 
     IEnumerator TorchDamage()
     {
         while(true){
             yield return new WaitForSeconds(1f);
-            if(isInsideTorchLight == false)
-            {
-                ChangeHealth(-torchLightDamage);
-                torchLightDamage++;
-            }
+            ChangeHealth(-torchLightDamage);
+            torchLightDamage++;
         }
     }
 
