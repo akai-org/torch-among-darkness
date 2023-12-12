@@ -25,6 +25,7 @@ public class Player : MonoBehaviour
     public int health { get { return currentHealth; }}
     int currentHealth;
     bool isInvincible;
+    private Coroutine invincibleCoroutine;
     bool isDead;
 
     void Start()
@@ -105,20 +106,20 @@ public class Player : MonoBehaviour
 
 
     // health
-    public void ChangeHealth(int amount)
+    public void ChangeHealth(int amount, int giveInvincibility = 0)
     {
         if(amount < 0){
             if(isInvincible)
             {
                 return;
             }
-            StartCoroutine(SetInvincible(1f)); //invincibility frames
         }
         currentHealth = Mathf.Clamp(currentHealth + amount, 0, maxHealth);
         if(currentHealth <= 0)
         {
             isDead = true;
         }
+        SetInvincible(giveInvincibility);
         print(currentHealth + "/" + maxHealth);
     }
 
@@ -126,10 +127,18 @@ public class Player : MonoBehaviour
     {
         isDead = false;
         currentHealth = maxHealth;
-        StartCoroutine(SetInvincible(3f));
+        SetInvincible(3f); //invincibility frames
     }
 
-    IEnumerator SetInvincible(float time = 1f)
+    public void SetInvincible(float time = 1f)
+    {
+        if (invincibleCoroutine != null)
+        {
+            StopCoroutine(invincibleCoroutine);
+        }
+        invincibleCoroutine = StartCoroutine(InvincibleCoroutine(time));
+    }
+    private IEnumerator InvincibleCoroutine(float time = 1f)
     {
         isInvincible = true;
         yield return new WaitForSeconds(time);
