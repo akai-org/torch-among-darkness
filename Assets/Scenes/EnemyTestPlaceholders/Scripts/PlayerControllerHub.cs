@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class PlayerControllerHub : MonoBehaviour
 {
@@ -8,6 +9,10 @@ public class PlayerControllerHub : MonoBehaviour
     public Rigidbody2D body;
     public Vector2 movement;
     public Animator animator;
+
+    public TMP_Text hpText;
+
+    public int HP = 100;
 
     public static PlayerControllerHub Instance { get; private set; }
 
@@ -17,6 +22,7 @@ public class PlayerControllerHub : MonoBehaviour
     }
 
     void Update(){
+        hpText.text = "HP: "+HP;
         movement.x = Input.GetAxisRaw("Horizontal");
         movement.y = Input.GetAxisRaw("Vertical");
         }

@@ -27,6 +27,7 @@ public class GuardAI : MonoBehaviour
     private Animator animator;
     private Text stateDisplayText;
     private int patrolDirection = 1;
+    public PlayerControllerHub playerController;
     private Vector2 lastSeenPlayerPosition;
 
     // Helper methods (depend on how your scene has been set up)
@@ -50,7 +51,8 @@ public class GuardAI : MonoBehaviour
         fightFsm.AddState("Telegraph", onEnter: state => Debug.Log("telegraph anim"));
         fightFsm.AddState("Hit",
             onEnter: state => {
-                animator.Play("GuardHit");
+                playerController.HP -= 10;
+                Debug.Log("hit");
                 // TODO: Cause damage to player if in range.
             }
         );
@@ -68,7 +70,7 @@ public class GuardAI : MonoBehaviour
         fsm.AddState("Chase", new State(
             onLogic: state => {
             MoveTowards(playerPosition, chaseSpeed);
-            Debug.Log("test");
+            //Debug.Log("test");
             }
         ));
         fsm.AddState("Fight", fightFsm);
@@ -98,13 +100,14 @@ public class GuardAI : MonoBehaviour
     void OnTriggerEnter2D(Collider2D other) {
         if (other.CompareTag("Player"))
         {
+            playerController = other.gameObject.GetComponent<PlayerControllerHub>() as PlayerControllerHub;
             fsm.Trigger("PlayerSpotted");
         }
     }
 
     private void MoveTowards(Vector2 target, float speed, float minDistance=0)
     {
-        Debug.Log(target);
+        //Debug.Log(target);
         transform.position = Vector3.MoveTowards(
             transform.position,
             target,
