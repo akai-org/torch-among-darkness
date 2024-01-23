@@ -1,0 +1,71 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+
+public class Test : MonoBehaviour
+{
+    public PlayerCharacterController prefab;
+    public List<PlayerCharacterController> players = new();
+    Transform torchTransform;
+
+    // Start is called before the first frame update
+    async void Start()
+    {
+        Joystick.onCodeAcquired += (string code) =>
+        {
+            print(code);
+        };
+        Joystick.onError += (Exception e) =>
+        {
+            print(e);
+        };
+        Joystick.onPlayerJoined += (id, nickname) =>
+        {
+            print($"Player with nickname: {nickname} and id {id} joined the game");
+            var player = Instantiate(prefab, torchTransform.position, Quaternion.identity);
+            player.id = id;
+            player.userName = nickname;
+            players.Add(player);
+        };
+        Joystick.onPlayerMoved += (id, action) =>
+        {
+            print($"Player with id {id} performed action: {action}");
+        };
+        Joystick.onPlayerRemoved += (id, nickname) =>
+        {
+            print($"Player {nickname} with id {id} was removed");
+            var playerIndex = players.FindIndex(p => p.id == id);
+            var player = players[playerIndex];
+            players.RemoveAt(playerIndex);
+            Destroy(player.gameObject);
+        };
+        Joystick.onWebsocketError += (string msg) => {
+            print($"Websocket error: {msg}");
+        };
+        await Joystick.Begin(new JoystickConfig() { isSecure = false, port = "8081"});
+    }
+
+
+    // Update is called once per frame
+    void Update()
+    {
+        Joystick.Update();
+        if (Input.GetKeyDown(KeyCode.H))
+        {
+            SceneManager.LoadScene("second_scene");
+        }
+    }
+
+    void Awake()
+    {
+        DontDestroyOnLoad(transform.gameObject);
+        torchTransform = GameObject.Find("Torch").GetComponent<Transform>();
+    }
+
+    private async void OnApplicationQuit()
+    {
+        await Joystick.GameOver();
+    }
+}
