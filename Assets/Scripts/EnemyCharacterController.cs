@@ -4,6 +4,13 @@ using UnityEngine;
 
 public class EnemyCharacterController : CharacterControler
 {
+    protected Animator animator;
+
+    //Attack
+    [SerializeField] protected int attackDamage = 1;
+    [SerializeField] protected float attackSpeed = 2;
+    [SerializeField] protected float attackRange = 3;
+
     // Start is called before the first frame update
     new void Start()
     {

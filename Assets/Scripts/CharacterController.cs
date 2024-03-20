@@ -20,9 +20,15 @@ public class CharacterControler : MonoBehaviour
     protected Coroutine invincibleCoroutine;
     protected bool isDead;
 
+    // particle
+    protected ParticleSystem particleSystemBlood;
+
     // Start is called before the first frame update
     protected void Start()
     {
+        Transform bloodChild = GetComponentInChildren<Transform>().Find("Blood");
+        particleSystemBlood = bloodChild.GetComponent<ParticleSystem>();
+        
         rigidbody2d = GetComponent<Rigidbody2D>();
         currentHealth = maxHealth;
     }
@@ -51,6 +57,7 @@ public class CharacterControler : MonoBehaviour
     public void ChangeHealth(int amount, int giveInvincibility = 0)
     {
         if(amount < 0){
+            particleSystemBlood.Emit(50);
             if(isInvincible)
             {
                 return;
@@ -67,8 +74,9 @@ public class CharacterControler : MonoBehaviour
 
     virtual protected void Death()
     {
+        particleSystemBlood.Emit(500);
         isDead = true;
-        Destroy(gameObject);
+        Destroy(gameObject, 1f);
         // override in child class
     }
 

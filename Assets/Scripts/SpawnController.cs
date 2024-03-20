@@ -61,7 +61,7 @@ public class Test : MonoBehaviour
     void Awake()
     {
         DontDestroyOnLoad(transform.gameObject);
-        torchTransform = GameObject.Find("Torch").GetComponent<Transform>();
+        torchTransform = GameObject.Find("torch").GetComponent<Transform>();
     }
 
     private async void OnApplicationQuit()
